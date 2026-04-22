@@ -10,7 +10,7 @@ body {
   text-align: center;
   background: #f5f5f5;
   color: black;
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .dark {
@@ -30,12 +30,12 @@ table {
 
 td, th {
   border: 1px solid #ccc;
-  width: 130px;
-  height: 90px;
+  width: 140px;
+  height: 100px;
   cursor: pointer;
   vertical-align: top;
-  padding: 6px;
-  font-size: 14px;
+  padding: 8px;
+  font-size: 16px;
 }
 
 td.active {
@@ -69,13 +69,15 @@ button {
 <div class="top-right">
   <button onclick="toggleAdmin()">Admin</button>
   <button onclick="toggleDark()">🌙</button>
+  <button onclick="fontSize(1)">A+</button>
+  <button onclick="fontSize(-1)">A-</button>
 </div>
 
 <h2>Rozvrh</h2>
 
 <div class="controls">
   <button onclick="changeWeek(-1)">⬅️</button>
-  <span id="weekLabel">Týden: 17</span>
+  <span id="weekLabel"></span>
   <button onclick="changeWeek(1)">➡️</button>
 </div>
 
@@ -108,7 +110,16 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-let week = 17;
+// ISO WEEK
+function getWeekNumber() {
+  const d = new Date();
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
+  const week1 = new Date(d.getFullYear(),0,4);
+  return 1 + Math.round(((d - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+}
+
+let week = getWeekNumber();
 let admin = false;
 let selected = null;
 let dialogOpen = false;
@@ -232,6 +243,14 @@ function toggleDark(){
   document.body.classList.toggle("dark");
 }
 
+// FONT SIZE CONTROL
+let currentFont = 18;
+function fontSize(delta){
+  currentFont += delta;
+  document.body.style.fontSize = currentFont + "px";
+}
+
+document.getElementById("weekLabel").innerText="Týden: "+week;
 renderTable();
 
 </script>
