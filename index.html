@@ -36,18 +36,17 @@ table {
   border-collapse: collapse;
   margin: 20px auto;
   width: 100%;
+  table-layout: fixed; /* 🔑 pevné sloupce */
 }
 
 td, th {
   border: 1px dashed #b0c4de;
   height: 100px;
   width: 140px;
-  padding: 10px;
+  padding: 0; /* 🔑 aby wrapper seděl přesně */
   font-size: 20px;
   border-radius: 8px;
   overflow: hidden;
-  word-wrap: break-word;
-  word-break: break-word;
 }
 
 th { background: #d6e0f0; }
@@ -89,6 +88,22 @@ button {
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 .dark #formBox { background:#2c2c2c; }
+
+/* 🔑 wrapper uvnitř buňky */
+.cell-content{
+  width:100%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  overflow:hidden;
+  line-height:1.1;
+  padding:6px;
+  box-sizing:border-box;
+  word-break:break-word;
+}
 </style>
 
 </head>
@@ -125,38 +140,23 @@ button {
   <button id="deleteBtn" onclick="deleteData()" style="display:none;">Smazat</button>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js">
-function autoResizeText(){
-  document.querySelectorAll("td").forEach(td=>{
-    let el = td.firstElementChild;
-    if(!el) return;
-    let size = 22;
-    el.style.fontSize = size + "px";
-    while(el.scrollHeight > td.clientHeight && size > 10){
-      size -= 1;
-      el.style.fontSize = size + "px";
-    }
-  });
-}
-
-</script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js">
-function autoResizeText(){
-  document.querySelectorAll("td").forEach(td=>{
-    let el = td.firstElementChild;
-    if(!el) return;
-    let size = 22;
-    el.style.fontSize = size + "px";
-    while(el.scrollHeight > td.clientHeight && size > 10){
-      size -= 1;
-      el.style.fontSize = size + "px";
-    }
-  });
-}
-
-</script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
+
+function autoResizeText(){
+  document.querySelectorAll("td").forEach(td=>{
+    let el = td.querySelector(".cell-content"); /* 🔑 správný element */
+    if(!el) return;
+    let size = 22;
+    el.style.fontSize = size + "px";
+    while(el.scrollHeight > td.clientHeight && size > 10){
+      size -= 1;
+      el.style.fontSize = size + "px";
+    }
+  });
+}
 
 const firebaseConfig = {
   apiKey: "AIzaSyCWCXir_hVT7E8Macjd9KPTMLNmCOfHalI",
@@ -176,7 +176,6 @@ function getWeekNumber() {
   return 1 + Math.round(((d - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
 }
 
-/* DATUMY DNŮ */
 function getWeekDates() {
   let today = new Date();
   let monday = new Date(today);
@@ -232,7 +231,7 @@ function renderTable(){
   });
 
   loadData();
-setTimeout(autoResizeText,50);
+  setTimeout(autoResizeText,50);
 }
 
 function cellClick(d,h){
@@ -264,7 +263,6 @@ function saveData(){
   ref.once("value").then(snapshot => {
     const existing = snapshot.val();
 
-    // pokud už něco existuje a nejsi admin → STOP
     if(existing && !admin){
       alert("❗ Termín byl mezitím obsazen někým jiným.");
       closeForm();
@@ -309,12 +307,13 @@ function loadData(){
           if(val.s==="GYBY") cell.classList.add("gyby");
           if(val.s==="ZŠ Vejrostova") cell.classList.add("zs");
 
-          cell.innerHTML=`<div style="font-size:18px; line-height:1.2; word-break:break-word;"><b style="font-size:22px">${val.s}</b><br>${val.t}<br>${val.c}</div>`;
+          cell.innerHTML=`<div class="cell-content"><b>${val.s}</b><br>${val.t}<br>${val.c}</div>`;
         } else {
           cell.innerHTML="";
         }
       });
     });
+    setTimeout(autoResizeText,50);
   });
 }
 
@@ -322,7 +321,6 @@ function changeWeek(x){
   week+=x;
   document.getElementById("weekLabel").innerText="Týden: "+week;
   renderTable();
-autoResizeText();
 }
 
 function toggleAdmin(){
@@ -335,21 +333,6 @@ function toggleDark(){
 
 document.getElementById("weekLabel").innerText="Týden: "+week;
 renderTable();
-autoResizeText();
-
-
-function autoResizeText(){
-  document.querySelectorAll("td").forEach(td=>{
-    let el = td.firstElementChild;
-    if(!el) return;
-    let size = 22;
-    el.style.fontSize = size + "px";
-    while(el.scrollHeight > td.clientHeight && size > 10){
-      size -= 1;
-      el.style.fontSize = size + "px";
-    }
-  });
-}
 
 </script>
 
