@@ -13,6 +13,16 @@ body {
   font-size: 22px;
 }
 
+/* DARK MODE */
+.dark {
+  background: #1e1e1e;
+  color: #eee;
+}
+.dark .container { background:#2c2c2c; }
+.dark table { background:#2c2c2c; }
+.dark th { background:#444; color:#fff; }
+.dark td { background:#3a3a3a; color:#fff; }
+
 .container {
   background: white;
   margin: 40px auto;
@@ -36,22 +46,16 @@ td, th {
   border-radius: 8px;
 }
 
-th {
-  background: #d6e0f0;
-}
+th { background: #d6e0f0; }
 
 td {
   background: #f9fbff;
   cursor: pointer;
 }
 
-td:hover {
-  background: #e6efff;
-}
+td:hover { background: #e6efff; }
 
-td.active {
-  outline: 3px solid #5a7bd8;
-}
+td.active { outline: 3px solid #5a7bd8; }
 
 td.gyby { background:#d4f5d0; }
 td.zs { background:#f5d0d0; }
@@ -73,15 +77,14 @@ button {
   font-size: 16px;
 }
 
-.controls {
-  margin: 10px;
-}
+.controls { margin: 10px; }
 
 #formBox {
   background: white;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
+.dark #formBox { background:#2c2c2c; }
 </style>
 
 </head>
@@ -89,6 +92,7 @@ button {
 
 <div class="top-right">
   <button onclick="toggleAdmin()">Admin</button>
+  <button onclick="toggleDark()">🌙</button>
 </div>
 
 <div class="container">
@@ -140,6 +144,21 @@ function getWeekNumber() {
   return 1 + Math.round(((d - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
 }
 
+/* DATUMY DNŮ */
+function getWeekDates() {
+  let today = new Date();
+  let monday = new Date(today);
+  monday.setDate(today.getDate() - today.getDay() + 1 + (week - getWeekNumber()) * 7);
+
+  let result = [];
+  for (let i = 0; i < 5; i++) {
+    let d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    result.push(d.getDate() + "." + (d.getMonth()+1) + ".");
+  }
+  return result;
+}
+
 let week = getWeekNumber();
 let admin = false;
 let selected = null;
@@ -164,13 +183,15 @@ function renderTable(){
   const t=document.getElementById("table");
   t.innerHTML="";
 
+  const dates = getWeekDates();
+
   let h="<tr><th></th>";
   hours.forEach(x=>h+=`<th style="font-size:18px">${x.name}<br><small style="font-size:14px">${x.time}</small></th>`);
   h+="</tr>";
   t.innerHTML+=h;
 
   days.forEach((d,di)=>{
-    let r=`<tr><th>${d}</th>`;
+    let r=`<tr><th>${d}<br><small>${dates[di]}</small></th>`;
     hours.forEach((_,hi)=>{
       r+=`<td id="c-${di}-${hi}" onclick="cellClick(${di},${hi})"></td>`;
     });
@@ -258,6 +279,10 @@ function changeWeek(x){
 
 function toggleAdmin(){
   if(prompt("Heslo:")==="1234") admin=true;
+}
+
+function toggleDark(){
+  document.body.classList.toggle("dark");
 }
 
 document.getElementById("weekLabel").innerText="Týden: "+week;
