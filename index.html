@@ -6,11 +6,11 @@
 
 <style>
 body {
-  font-family: 'Segoe UI', Arial;
+  font-family: Arial;
   text-align: center;
   background: linear-gradient(135deg,#a8b9d6,#d6e0f0);
   color: #2c3e50;
-  font-size: 18px;
+  font-size: 22px;
 }
 
 .container {
@@ -18,7 +18,7 @@ body {
   margin: 40px auto;
   padding: 20px;
   border-radius: 16px;
-  width: 90%;
+  width: 95%;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
@@ -30,9 +30,9 @@ table {
 
 td, th {
   border: 1px dashed #b0c4de;
-  height: 90px;
-  padding: 8px;
-  font-size: 15px;
+  height: 100px;
+  padding: 10px;
+  font-size: 20px;
   border-radius: 8px;
 }
 
@@ -43,7 +43,6 @@ th {
 td {
   background: #f9fbff;
   cursor: pointer;
-  transition: 0.2s;
 }
 
 td:hover {
@@ -64,17 +63,14 @@ td.zs { background:#f5d0d0; }
 }
 
 button {
-  padding: 8px 12px;
+  padding: 10px 14px;
   margin: 3px;
   cursor: pointer;
   border-radius: 8px;
   border: none;
   background: #7da2f2;
   color: white;
-}
-
-button:hover {
-  background: #5a7bd8;
+  font-size: 16px;
 }
 
 .controls {
@@ -93,9 +89,6 @@ button:hover {
 
 <div class="top-right">
   <button onclick="toggleAdmin()">Admin</button>
-  <button onclick="toggleDark()">🌙</button>
-  <button onclick="fontSize(1)">A+</button>
-  <button onclick="fontSize(-1)">A-</button>
 </div>
 
 <div class="container">
@@ -172,7 +165,7 @@ function renderTable(){
   t.innerHTML="";
 
   let h="<tr><th></th>";
-  hours.forEach(x=>h+=`<th>${x.name}<br><small>${x.time}</small></th>`);
+  hours.forEach(x=>h+=`<th style="font-size:18px">${x.name}<br><small style="font-size:14px">${x.time}</small></th>`);
   h+="</tr>";
   t.innerHTML+=h;
 
@@ -248,7 +241,7 @@ function loadData(){
           if(val.s==="GYBY") cell.classList.add("gyby");
           if(val.s==="ZŠ Vejrostova") cell.classList.add("zs");
 
-          cell.innerHTML=`<b>${val.s}</b><br>${val.t}<br>${val.c}`;
+          cell.innerHTML=`<div style="font-size:18px"><b style="font-size:22px">${val.s}</b><br>${val.t}<br>${val.c}</div>`;
         } else {
           cell.innerHTML="";
         }
@@ -265,16 +258,6 @@ function changeWeek(x){
 
 function toggleAdmin(){
   if(prompt("Heslo:")==="1234") admin=true;
-}
-
-function toggleDark(){
-  document.body.classList.toggle("dark");
-}
-
-let currentFont = 18;
-function fontSize(delta){
-  currentFont += delta;
-  document.body.style.fontSize = currentFont + "px";
 }
 
 document.getElementById("weekLabel").innerText="Týden: "+week;
