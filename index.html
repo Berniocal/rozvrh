@@ -36,13 +36,17 @@ table {
   border-collapse: collapse;
   margin: 20px auto;
   width: 100%;
-  table-layout: fixed; /* 🔑 pevné sloupce */
+  table-layout: fixed;
+}
+
+th, td {
+  width: calc(100% / 11); /* 10 hodin + 1 sloupec dnů */
 }
 
 td, th {
   border: 1px dashed #b0c4de;
   height: 100px;
-  width: 140px;
+  
   padding: 0; /* 🔑 aby wrapper seděl přesně */
   font-size: 20px;
   border-radius: 8px;
