@@ -258,12 +258,26 @@ function cellClick(d,h){
 }
 
 function saveData(){
-  const s=document.getElementById("school").value;
-  const t=document.getElementById("teacher").value;
-  const c=document.getElementById("class").value;
 
-  db.ref(`weeks/${week}/${selected.d}/${selected.h}`).set({s,t,c});
-  closeForm();
+  const ref = db.ref(`weeks/${week}/${selected.d}/${selected.h}`);
+
+  ref.once("value").then(snapshot => {
+    const existing = snapshot.val();
+
+    // pokud už něco existuje a nejsi admin → STOP
+    if(existing && !admin){
+      alert("❗ Termín byl mezitím obsazen někým jiným.");
+      closeForm();
+      return;
+    }
+
+    const s = document.getElementById("school").value;
+    const t = document.getElementById("teacher").value;
+    const c = document.getElementById("class").value;
+
+    ref.set({s,t,c});
+    closeForm();
+  });
 }
 
 function deleteData(){
