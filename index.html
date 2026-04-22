@@ -12,7 +12,7 @@ body {
   color: black;
 }
 
-.dark body {
+.dark {
   background: #1e1e1e;
   color: white;
 }
@@ -30,7 +30,7 @@ table {
 td, th {
   border: 1px solid #ccc;
   width: 120px;
-  height: 80px;
+  height: 70px;
   cursor: pointer;
   vertical-align: top;
   padding: 5px;
@@ -56,8 +56,8 @@ td.filled {
 }
 
 button {
-  margin: 2px;
   padding: 6px 10px;
+  margin: 2px;
   cursor: pointer;
 }
 </style>
@@ -80,7 +80,6 @@ button {
 
 <table id="table"></table>
 
-<!-- FORM -->
 <div id="formBox" style="display:none; position:fixed; top:30%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border:1px solid black;">
   <select id="school">
     <option>GYBY</option>
@@ -89,6 +88,7 @@ button {
   <input id="teacher" placeholder="Učitel"><br><br>
   <input id="class" placeholder="Třída"><br><br>
   <button onclick="saveData()">Uložit</button>
+  <button id="deleteBtn" onclick="deleteData()" style="display:none;">Smazat</button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -107,97 +107,123 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 let week = 0;
-let selected = null;
 let admin = false;
+let selected = null;
 
-const days = ["Po","Út","St","Čt","Pá"];
+const days = ["Po", "Út", "St", "Čt", "Pá"];
 
 const hours = [
-  {name:"0",time:"7:05-7:50"},
-  {name:"1",time:"8:00-8:45"},
-  {name:"2",time:"8:55-9:40"},
-  {name:"3",time:"10:00-10:45"},
-  {name:"4",time:"10:55-11:40"},
-  {name:"5a",time:"11:50-12:35"},
-  {name:"5b",time:"12:20-13:05"},
-  {name:"6",time:"13:15-14:00"},
-  {name:"7",time:"14:10-14:55"},
-  {name:"8",time:"15:05-15:50"}
+  {name:"0", time:"7:05-7:50"},
+  {name:"1", time:"8:00-8:45"},
+  {name:"2", time:"8:55-9:40"},
+  {name:"3", time:"10:00-10:45"},
+  {name:"4", time:"10:55-11:40"},
+  {name:"5a", time:"11:50-12:35"},
+  {name:"5b", time:"12:20-13:05"},
+  {name:"6", time:"13:15-14:00"},
+  {name:"7", time:"14:10-14:55"},
+  {name:"8", time:"15:05-15:50"}
 ];
 
-function renderTable(){
-  const t=document.getElementById("table");
-  t.innerHTML="";
+function getWeekDates() {
+  let today = new Date();
+  let monday = new Date(today);
+  monday.setDate(today.getDate() - today.getDay() + 1 + week * 7);
 
-  let h="<tr><th></th>";
-  hours.forEach(x=>h+=`<th>${x.name}<br><small>${x.time}</small></th>`);
-  h+="</tr>";
-  t.innerHTML+=h;
+  let result = [];
+  for (let i = 0; i < 5; i++) {
+    let d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    result.push(d.getDate() + "." + (d.getMonth()+1) + ".");
+  }
+  return result;
+}
 
-  days.forEach((d,di)=>{
-    let r=`<tr><th>${d}</th>`;
-    hours.forEach((_,hi)=>{
-      r+=`<td id="c-${di}-${hi}" onclick="cellClick(${di},${hi})"></td>`;
+function renderTable() {
+  const table = document.getElementById("table");
+  table.innerHTML = "";
+
+  const dates = getWeekDates();
+
+  let header = "<tr><th></th>";
+  hours.forEach(h => {
+    header += `<th>${h.name}<br><small>${h.time}</small></th>`;
+  });
+  header += "</tr>";
+  table.innerHTML += header;
+
+  days.forEach((day, d) => {
+    let row = `<tr><th>${day}<br><small>${dates[d]}</small></th>`;
+    hours.forEach((h, i) => {
+      row += `<td onclick="editCell(${d},${i})" id="cell-${d}-${i}"></td>`;
     });
-    r+="</tr>";
-    t.innerHTML+=r;
+    row += "</tr>";
+    table.innerHTML += row;
   });
 
   loadData();
 }
 
-function cellClick(d,h){
-  const ref=db.ref(`weeks/${week}/${d}/${h}`);
-  ref.once("value").then(s=>{
-    if(s.exists() && !admin){
+function editCell(d, h) {
+  const ref = db.ref(`weeks/${week}/${d}/${h}`);
+  ref.once("value").then(snap => {
+    const data = snap.val();
+    if (data && !admin) {
       alert("Obsazeno");
       return;
     }
-    selected={d,h};
-    document.getElementById("formBox").style.display="block";
+    selected = {d,h};
+    document.getElementById("formBox").style.display = "block";
+    document.getElementById("deleteBtn").style.display = (admin && data) ? "inline" : "none";
   });
 }
 
-function saveData(){
-  const s=document.getElementById("school").value;
-  const t=document.getElementById("teacher").value;
-  const c=document.getElementById("class").value;
+function saveData() {
+  const s = document.getElementById("school").value;
+  const t = document.getElementById("teacher").value;
+  const c = document.getElementById("class").value;
 
   db.ref(`weeks/${week}/${selected.d}/${selected.h}`).set({s,t,c});
-  document.getElementById("formBox").style.display="none";
+  document.getElementById("formBox").style.display = "none";
 }
 
-function loadData(){
-  db.ref(`weeks/${week}`).on("value",snap=>{
-    const data=snap.val()||{};
-    days.forEach((_,d)=>{
-      hours.forEach((_,h)=>{
-        const cell=document.getElementById(`c-${d}-${h}`);
-        const val=data?.[d]?.[h];
-        if(val){
+function deleteData() {
+  db.ref(`weeks/${week}/${selected.d}/${selected.h}`).remove();
+  document.getElementById("formBox").style.display = "none";
+}
+
+function loadData() {
+  db.ref(`weeks/${week}`).on("value", snapshot => {
+    const data = snapshot.val() || {};
+
+    days.forEach((_, d) => {
+      hours.forEach((_, h) => {
+        const cell = document.getElementById(`cell-${d}-${h}`);
+        const val = data?.[d]?.[h];
+        if (val) {
           cell.classList.add("filled");
-          cell.innerHTML=`<b>${val.s}</b><br>${val.t}<br>${val.c}`;
+          cell.innerHTML = `<b>${val.s}</b><br>${val.t}<br>${val.c}`;
         } else {
           cell.classList.remove("filled");
-          cell.innerHTML="";
+          cell.innerHTML = "";
         }
       });
     });
   });
 }
 
-function changeWeek(x){
-  week+=x;
-  document.getElementById("weekLabel").innerText="Týden: "+week;
+function changeWeek(delta) {
+  week += delta;
+  document.getElementById("weekLabel").innerText = "Týden: " + week;
   renderTable();
 }
 
-function toggleAdmin(){
-  const p=prompt("Heslo:");
-  if(p==="1234") admin=true;
+function toggleAdmin() {
+  const p = prompt("Heslo:");
+  if (p === "1234") admin = true;
 }
 
-function toggleDark(){
+function toggleDark() {
   document.body.classList.toggle("dark");
 }
 
