@@ -306,7 +306,12 @@ function loadData(){
           if(val.s==="GYBY") cell.classList.add("gyby");
           if(val.s==="ZŠ Vejrostova") cell.classList.add("zs");
 
-          cell.innerHTML=`<div class="cell-content"><b>${val.s}</b><br>${val.t}<br>${val.c}</div>`;
+          let schoolText = val.s === "ZŠ Vejrostova" ? "ZŠ<br>Vejrostova" : val.s;
+cell.innerHTML=`<div class="cell-content">
+<b style="white-space:nowrap;">${schoolText}</b><br>
+<span style="white-space:nowrap;">${val.t}</span><br>
+<span style="white-space:nowrap;">${val.c}</span>
+</div>`;
         } else {
           cell.innerHTML="";
         }
