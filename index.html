@@ -41,9 +41,13 @@ table {
 td, th {
   border: 1px dashed #b0c4de;
   height: 100px;
+  width: 140px;
   padding: 10px;
   font-size: 20px;
   border-radius: 8px;
+  overflow: hidden;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 
 th { background: #d6e0f0; }
@@ -121,8 +125,36 @@ button {
   <button id="deleteBtn" onclick="deleteData()" style="display:none;">Smazat</button>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js">
+function autoResizeText(){
+  document.querySelectorAll("td").forEach(td=>{
+    let el = td.firstElementChild;
+    if(!el) return;
+    let size = 22;
+    el.style.fontSize = size + "px";
+    while(el.scrollHeight > td.clientHeight && size > 10){
+      size -= 1;
+      el.style.fontSize = size + "px";
+    }
+  });
+}
+
+</script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js">
+function autoResizeText(){
+  document.querySelectorAll("td").forEach(td=>{
+    let el = td.firstElementChild;
+    if(!el) return;
+    let size = 22;
+    el.style.fontSize = size + "px";
+    while(el.scrollHeight > td.clientHeight && size > 10){
+      size -= 1;
+      el.style.fontSize = size + "px";
+    }
+  });
+}
+
+</script>
 
 <script>
 
@@ -200,6 +232,7 @@ function renderTable(){
   });
 
   loadData();
+setTimeout(autoResizeText,50);
 }
 
 function cellClick(d,h){
@@ -262,7 +295,7 @@ function loadData(){
           if(val.s==="GYBY") cell.classList.add("gyby");
           if(val.s==="ZŠ Vejrostova") cell.classList.add("zs");
 
-          cell.innerHTML=`<div style="font-size:18px"><b style="font-size:22px">${val.s}</b><br>${val.t}<br>${val.c}</div>`;
+          cell.innerHTML=`<div style="font-size:18px; line-height:1.2; word-break:break-word;"><b style="font-size:22px">${val.s}</b><br>${val.t}<br>${val.c}</div>`;
         } else {
           cell.innerHTML="";
         }
@@ -275,6 +308,7 @@ function changeWeek(x){
   week+=x;
   document.getElementById("weekLabel").innerText="Týden: "+week;
   renderTable();
+autoResizeText();
 }
 
 function toggleAdmin(){
@@ -287,6 +321,21 @@ function toggleDark(){
 
 document.getElementById("weekLabel").innerText="Týden: "+week;
 renderTable();
+autoResizeText();
+
+
+function autoResizeText(){
+  document.querySelectorAll("td").forEach(td=>{
+    let el = td.firstElementChild;
+    if(!el) return;
+    let size = 22;
+    el.style.fontSize = size + "px";
+    while(el.scrollHeight > td.clientHeight && size > 10){
+      size -= 1;
+      el.style.fontSize = size + "px";
+    }
+  });
+}
 
 </script>
 
