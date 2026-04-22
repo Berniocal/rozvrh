@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<title>Rozvrh</title>
+<style>
+body {
+  font-family: Arial;
+  text-align: center;
+}
+
+table {
+  border-collapse: collapse;
+  margin: auto;
+}
+
+td, th {
+  border: 1px solid #ccc;
+  width: 120px;
+  height: 60px;
+  cursor: pointer;
+}
+
+td:hover {
+  background: #eef;
+}
+
+.controls {
+  margin: 10px;
+}
+
+</style>
+</head>
+<body>
+
+<h2>Rozvrh</h2>
+
+<div class="controls">
+  <button onclick="changeWeek(-1)">⬅️</button>
+  <span id="weekLabel"></span>
+  <button onclick="changeWeek(1)">➡️</button>
+</div>
+
+<table id="table"></table>
+
+<div class="controls">
+  <button onclick="changeWeek(-1)">⬅️</button>
+  <button onclick="changeWeek(1)">➡️</button>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+
+<script>
+
+// 🔥 sem vložíš svoje Firebase údaje
+const firebaseConfig = {
+  apiKey: "TVUJ_API_KEY",
+  authDomain: "TVUJ_PROJECT.firebaseapp.com",
+  databaseURL: "https://TVUJ_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "TVUJ_PROJECT",
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let week = 0;
+
+const days = ["Po", "Út", "St", "Čt", "Pá"];
+const hours = ["0","1","2","3","4","5a","5b","6","7","8"];
+
+function renderTable() {
+  const table = document.getElementById("table");
+  table.innerHTML = "";
+
+  let header = "<tr><th></th>";
+  hours.forEach(h => header += `<th>${h}</th>`);
+  header += "</tr>";
+  table.innerHTML += header;
+
+  days.forEach((day, d) => {
+    let row = `<tr><th>${day}</th>`;
+    hours.forEach((h, i) => {
+      row += `<td onclick="editCell(${d},${i})" id="cell-${d}-${i}"></td>`;
+    });
+    row += "</tr>";
+    table.innerHTML += row;
+  });
+
+  loadData();
+}
+
+function editCell(d, h) {
+  let text = prompt("Zadej: škola, učitel, třída");
+  if (!text) return;
+
+  db.ref(`weeks/${week}/${d}/${h}`).set(text);
+}
+
+function loadData() {
+  db.ref(`weeks/${week}`).on("value", snapshot => {
+    const data = snapshot.val() || {};
+
+    days.forEach((_, d) => {
+      hours.forEach((_, h) => {
+        const cell = document.getElementById(`cell-${d}-${h}`);
+        cell.innerText = data?.[d]?.[h] || "";
+      });
+    });
+  });
+}
+
+function changeWeek(delta) {
+  week += delta;
+  document.getElementById("weekLabel").innerText = "Týden: " + week;
+  renderTable();
+}
+
+// admin mazání
+function deleteCell(d, h) {
+  let pass = prompt("Admin heslo:");
+  if (pass !== "1234") return;
+
+  db.ref(`weeks/${week}/${d}/${h}`).remove();
+}
+
+renderTable();
+
+</script>
+
+</body>
+</html>
