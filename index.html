@@ -9,10 +9,12 @@ body {
   font-family: Arial;
   text-align: center;
   background: #f5f5f5;
+  color: black;
 }
 
-h2 {
-  margin-top: 20px;
+.dark body {
+  background: #1e1e1e;
+  color: white;
 }
 
 table {
@@ -21,31 +23,41 @@ table {
   background: white;
 }
 
+.dark table {
+  background: #2c2c2c;
+}
+
 td, th {
   border: 1px solid #ccc;
   width: 120px;
-  height: 70px;
+  height: 80px;
   cursor: pointer;
   vertical-align: top;
   padding: 5px;
   font-size: 12px;
 }
 
-td:hover {
-  background: #eef;
+td.filled {
+  background: #c8f7c5;
 }
 
-th {
-  background: #ddd;
+.dark td.filled {
+  background: #2e7d32;
 }
 
 .controls {
   margin: 10px;
 }
 
+.top-right {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
 button {
-  padding: 8px 12px;
-  font-size: 16px;
+  margin: 2px;
+  padding: 6px 10px;
   cursor: pointer;
 }
 </style>
@@ -53,19 +65,30 @@ button {
 </head>
 <body>
 
+<div class="top-right">
+  <button onclick="toggleAdmin()">Admin</button>
+  <button onclick="toggleDark()">🌙</button>
+</div>
+
 <h2>Rozvrh</h2>
 
 <div class="controls">
   <button onclick="changeWeek(-1)">⬅️</button>
-  <span id="weekLabel">Týden: 0</span>
+  <span id="weekLabel">Týden: 17</span>
   <button onclick="changeWeek(1)">➡️</button>
 </div>
 
 <table id="table"></table>
 
-<div class="controls">
-  <button onclick="changeWeek(-1)">⬅️</button>
-  <button onclick="changeWeek(1)">➡️</button>
+<!-- FORM -->
+<div id="formBox" style="display:none; position:fixed; top:30%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border:1px solid black;">
+  <select id="school">
+    <option>GYBY</option>
+    <option>ZŠ Vejrostova</option>
+  </select><br><br>
+  <input id="teacher" placeholder="Učitel"><br><br>
+  <input id="class" placeholder="Třída"><br><br>
+  <button onclick="saveData()">Uložit</button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -84,87 +107,98 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 let week = 0;
+let selected = null;
+let admin = false;
 
-const days = ["Po", "Út", "St", "Čt", "Pá"];
+const days = ["Po","Út","St","Čt","Pá"];
 
 const hours = [
-  {name:"0", time:"7:05-7:50"},
-  {name:"1", time:"8:00-8:45"},
-  {name:"2", time:"8:55-9:40"},
-  {name:"3", time:"10:00-10:45"},
-  {name:"4", time:"10:55-11:40"},
-  {name:"5a", time:"11:50-12:35"},
-  {name:"5b", time:"12:20-13:05"},
-  {name:"6", time:"13:15-14:00"},
-  {name:"7", time:"14:10-14:55"},
-  {name:"8", time:"15:05-15:50"}
+  {name:"0",time:"7:05-7:50"},
+  {name:"1",time:"8:00-8:45"},
+  {name:"2",time:"8:55-9:40"},
+  {name:"3",time:"10:00-10:45"},
+  {name:"4",time:"10:55-11:40"},
+  {name:"5a",time:"11:50-12:35"},
+  {name:"5b",time:"12:20-13:05"},
+  {name:"6",time:"13:15-14:00"},
+  {name:"7",time:"14:10-14:55"},
+  {name:"8",time:"15:05-15:50"}
 ];
 
-function getWeekDates() {
-  let today = new Date();
-  let monday = new Date(today);
-  monday.setDate(today.getDate() - today.getDay() + 1 + week * 7);
+function renderTable(){
+  const t=document.getElementById("table");
+  t.innerHTML="";
 
-  let result = [];
-  for (let i = 0; i < 5; i++) {
-    let d = new Date(monday);
-    d.setDate(monday.getDate() + i);
-    result.push(d.getDate() + "." + (d.getMonth()+1) + ".");
-  }
-  return result;
-}
+  let h="<tr><th></th>";
+  hours.forEach(x=>h+=`<th>${x.name}<br><small>${x.time}</small></th>`);
+  h+="</tr>";
+  t.innerHTML+=h;
 
-function renderTable() {
-  const table = document.getElementById("table");
-  table.innerHTML = "";
-
-  const dates = getWeekDates();
-
-  let header = "<tr><th></th>";
-  hours.forEach(h => {
-    header += `<th>${h.name}<br><small>${h.time}</small></th>`;
-  });
-  header += "</tr>";
-  table.innerHTML += header;
-
-  days.forEach((day, d) => {
-    let row = `<tr><th>${day}<br><small>${dates[d]}</small></th>`;
-    hours.forEach((h, i) => {
-      row += `<td onclick="editCell(${d},${i})" id="cell-${d}-${i}"></td>`;
+  days.forEach((d,di)=>{
+    let r=`<tr><th>${d}</th>`;
+    hours.forEach((_,hi)=>{
+      r+=`<td id="c-${di}-${hi}" onclick="cellClick(${di},${hi})"></td>`;
     });
-    row += "</tr>";
-    table.innerHTML += row;
+    r+="</tr>";
+    t.innerHTML+=r;
   });
 
   loadData();
 }
 
-function editCell(d, h) {
-  let text = prompt("Zadej: škola, učitel, třída");
-  if (!text) return;
-
-  db.ref(`weeks/${week}/${d}/${h}`).set(text);
+function cellClick(d,h){
+  const ref=db.ref(`weeks/${week}/${d}/${h}`);
+  ref.once("value").then(s=>{
+    if(s.exists() && !admin){
+      alert("Obsazeno");
+      return;
+    }
+    selected={d,h};
+    document.getElementById("formBox").style.display="block";
+  });
 }
 
-function loadData() {
-  db.ref(`weeks/${week}`).on("value", snapshot => {
-    const data = snapshot.val() || {};
+function saveData(){
+  const s=document.getElementById("school").value;
+  const t=document.getElementById("teacher").value;
+  const c=document.getElementById("class").value;
 
-    days.forEach((_, d) => {
-      hours.forEach((_, h) => {
-        const cell = document.getElementById(`cell-${d}-${h}`);
-        if (cell) {
-          cell.innerText = data?.[d]?.[h] || "";
+  db.ref(`weeks/${week}/${selected.d}/${selected.h}`).set({s,t,c});
+  document.getElementById("formBox").style.display="none";
+}
+
+function loadData(){
+  db.ref(`weeks/${week}`).on("value",snap=>{
+    const data=snap.val()||{};
+    days.forEach((_,d)=>{
+      hours.forEach((_,h)=>{
+        const cell=document.getElementById(`c-${d}-${h}`);
+        const val=data?.[d]?.[h];
+        if(val){
+          cell.classList.add("filled");
+          cell.innerHTML=`<b>${val.s}</b><br>${val.t}<br>${val.c}`;
+        } else {
+          cell.classList.remove("filled");
+          cell.innerHTML="";
         }
       });
     });
   });
 }
 
-function changeWeek(delta) {
-  week += delta;
-  document.getElementById("weekLabel").innerText = "Týden: " + week;
+function changeWeek(x){
+  week+=x;
+  document.getElementById("weekLabel").innerText="Týden: "+week;
   renderTable();
+}
+
+function toggleAdmin(){
+  const p=prompt("Heslo:");
+  if(p==="1234") admin=true;
+}
+
+function toggleDark(){
+  document.body.classList.toggle("dark");
 }
 
 renderTable();
