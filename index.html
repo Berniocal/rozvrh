@@ -286,9 +286,8 @@ function saveData(){
 function deleteData(){
   if(admin){
     db.ref(`weeks/${week}/${selected.d}/${selected.h}`).set({
-      adminKey: "1234"
-    }).then(()=>{
-      db.ref(`weeks/${week}/${selected.d}/${selected.h}`).remove();
+      deleted: true,
+      adminKey: "TAJNE_HESLO"
     });
   }
   closeForm();
