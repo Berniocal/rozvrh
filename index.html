@@ -115,6 +115,29 @@ button {
 }
 .dark #formBox { background:#2c2c2c; }
 
+  .header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.logo {
+  height: 70px;
+  object-fit: contain;
+}
+
+.logo.left {
+  position: absolute;
+  left: 10px;
+}
+
+.logo.right {
+  position: absolute;
+  right: 10px;
+}
+
 /* 🔑 WRAPPER */
 .cell-content {
   position: absolute;
@@ -149,7 +172,13 @@ button {
 
 <div class="container">
 
-<h2>Rozvrh</h2>
+<div class="header">
+  <img src="logo-zs.png" class="logo left">
+
+  <h2>Rozvrh hokejbalového hřiště</h2>
+
+  <img src="logo-gyby.png" class="logo right">
+</div>
 
 <div class="controls">
   <button onclick="changeWeek(-1)">⬅️</button>
