@@ -287,7 +287,7 @@ function deleteData(){
   if(admin){
     db.ref(`weeks/${week}/${selected.d}/${selected.h}`).set({
       deleted: true,
-      adminKey: "TAJNE_HESLO"
+      adminKey: "1234"
     });
   }
   closeForm();
