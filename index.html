@@ -306,10 +306,7 @@ function saveData(){
 
 function deleteData(){
   if(admin){
-    db.ref(`weeks/${week}/${selected.d}/${selected.h}`).set({
-      deleted: true,
-      adminKey: "TAJNE_HESLO"
-    });
+    db.ref(`weeks/${week}/${selected.d}/${selected.h}`).remove();
   }
   closeForm();
 }
