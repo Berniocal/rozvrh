@@ -272,13 +272,25 @@ function saveData(){
     const t = document.getElementById("teacher").value;
     const c = document.getElementById("class").value;
 
-    ref.set({s,t,c});
+    let data = {s,t,c};
+
+    if(admin){
+      data.adminKey = "1234";
+    }
+
+    ref.set(data);
     closeForm();
   });
 }
 
 function deleteData(){
-  db.ref(`weeks/${week}/${selected.d}/${selected.h}`).remove();
+  if(admin){
+    db.ref(`weeks/${week}/${selected.d}/${selected.h}`).set({
+      adminKey: "1234"
+    }).then(()=>{
+      db.ref(`weeks/${week}/${selected.d}/${selected.h}`).remove();
+    });
+  }
   closeForm();
 }
 
