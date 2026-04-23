@@ -275,7 +275,7 @@ function saveData(){
     let data = {s,t,c};
 
     if(admin){
-      data.adminKey = "1234";
+      data.adminKey = "TAJNE_HESLO";
     }
 
     ref.set(data);
@@ -286,7 +286,7 @@ function saveData(){
 function deleteData(){
   if(admin){
     db.ref(`weeks/${week}/${selected.d}/${selected.h}`).set({
-      adminKey: "1234"
+      adminKey: "TAJNE_HESLO"
     }).then(()=>{
       db.ref(`weeks/${week}/${selected.d}/${selected.h}`).remove();
     });
