@@ -115,18 +115,23 @@ button {
 }
 .dark #formBox { background:#2c2c2c; }
 
-  .header {
+.header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  position: relative;
+  justify-content: center; /* změna */
+  gap: 60px;               /* mezery mezi prvky */
   margin-bottom: 10px;
 }
 
+.header h2 {
+  margin: 0 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
 .logo {
-  height: 126px; /* 70 × 1.8 = 126 */
+  height: 110px;
   object-fit: contain;
-  margin-top: 60px;
 }
 
 /* MOBIL */
@@ -138,19 +143,12 @@ button {
   }
 
   .logo {
-    position: static !important;
     height: 70px;
-    margin-top: 0;
   }
 
-  .logo.left,
-  .logo.right {
-    left: auto;
-    right: auto;
-  }
-
-  h2 {
+  .header h2 {
     font-size: 22px;
+    margin: 0;
   }
 }
 
