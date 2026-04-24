@@ -129,14 +129,29 @@ button {
   margin-top: 60px;
 }
 
-.logo.left {
-  position: absolute;
-  left: 18%;
-}
+/* MOBIL */
+@media (max-width: 600px){
 
-.logo.right {
-  position: absolute;
-  right: 18%;
+  .header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .logo {
+    position: static !important;
+    height: 70px;
+    margin-top: 0;
+  }
+
+  .logo.left,
+  .logo.right {
+    left: auto;
+    right: auto;
+  }
+
+  h2 {
+    font-size: 22px;
+  }
 }
 
 /* 🔑 WRAPPER */
