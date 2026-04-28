@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<title>Rozvrh hokejbalového hřiště</title>
+<title>Rezervace pro školy multifunkčního hřiště</title>
 
 <style>
 body {
@@ -85,8 +85,10 @@ td.active { outline: 3px solid #5a7bd8; }
 
 td.gyby { background:#cfe8cc; }
 td.zs { background:#e8caca; }
+td.other { background:#cce0ff; }
 .dark td.gyby { background:#2e5a2e; }
 .dark td.zs { background:#5a2e2e; }
+.dark td.other { background:#2e4a7a; }
 
 .top-right {
   position: absolute;
@@ -186,12 +188,18 @@ button {
 
 <div class="container">
 
+<div style="text-align:left; font-size:16px; margin-bottom:10px;">ZŠ Vejrostova 1, Brno 635 00</div>
+
 <div class="header">
   <img src="logo-zs.png" class="logo left">
 
-  <h2>Rozvrh hokejbalového hřiště</h2>
+  <h2>Rezervace pro školy multifunkčního hřiště</h2>
 
   <img src="logo-gyby.png" class="logo right">
+</div>
+
+<div style="text-align:center; margin-top:10px; margin-bottom:10px;">
+  <img src="logo-bystrc.png" class="logo">
 </div>
 
 <div class="controls">
@@ -208,6 +216,7 @@ button {
   <select id="school">
     <option>GYBY</option>
     <option>ZŠ Vejrostova</option>
+    <option>ZŠ/MŠ/jiné</option>
   </select><br><br>
   <input id="teacher" placeholder="Učitel"><br><br>
   <input id="class" placeholder="Třída"><br><br>
@@ -372,13 +381,14 @@ function loadData(){
         const cell=document.getElementById(`c-${d}-${h}`);
         const val=data?.[d]?.[h];
 
-        cell.classList.remove("gyby","zs");
+        cell.classList.remove("gyby","zs","other");
 
         if(val){
           if(val.s==="GYBY") cell.classList.add("gyby");
           if(val.s==="ZŠ Vejrostova") cell.classList.add("zs");
+          if(val.s==="ZŠ/MŠ/jiné") cell.classList.add("other");
 
-          let schoolText = val.s === "ZŠ Vejrostova" ? "ZŠ<br>Vejrostova" : val.s;
+          let schoolText = val.s === "ZŠ Vejrostova" ? "ZŠ<br>Vejrostova" : (val.s === "ZŠ/MŠ/jiné" ? "ZŠ/MŠ<br>jiné" : val.s);
 cell.innerHTML=`<div class="cell-content">
 <b >${schoolText}</b><br>
 <span >${val.t}</span><br>
