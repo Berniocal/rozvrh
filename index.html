@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<title>Rezervace pro školy multifunkčního hřiště</title>
+<title>Rezervace pro školy</title>
 
 <style>
 body {
@@ -64,7 +64,12 @@ td, th {
   word-wrap: break-word;
   word-break: break-word;
 }
-
+th:first-child {
+  width: 90px !important;
+  min-width: 90px;
+  max-width: 90px;
+}
+  
 /* 🔑 KLÍČOVÁ ÚPRAVA */
 td {
   padding: 0;
@@ -193,14 +198,16 @@ button {
 <div class="header">
   <img src="logo-zs.png" class="logo left">
 
- <h2>Rezervace pro školy<br>Multifunkční hřiště</h2>
+
+
+  <div style="text-align:center; margin-top:10px; margin-bottom:10px;">
+  <img src="logo-bystrc.png" style="height:60px; object-fit:contain;">
+</div>
 
   <img src="logo-gyby.png" class="logo right">
 </div>
 
-<div style="text-align:center; margin-top:10px; margin-bottom:10px;">
-  <img src="logo-bystrc.png" style="height:60px; object-fit:contain;">
-</div>
+ <h2>Rezervace pro školy<br>Multifunkční hřiště</h2>
 
 <div class="controls">
   <button onclick="changeWeek(-1)">⬅️</button>
