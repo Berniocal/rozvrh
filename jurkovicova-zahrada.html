@@ -80,21 +80,6 @@ a{color:#154c7a}
 @media(max-width:600px){.intro,.fields{grid-template-columns:1fr}.wrap{width:min(100% - 22px,890px)}.panel{padding:16px}.state{font-size:.72rem}.task summary{padding:13px;gap:9px}.num{width:39px;min-width:39px;height:39px}.body{padding:14px}.optiongrid{grid-template-columns:1fr 1fr}}
 @media(max-width:360px){.optiongrid{grid-template-columns:1fr}.task summary{flex-wrap:wrap}.arrow{display:none}}
 @media print{body{background:white;color:black;font-size:11pt}header{background:white!important;color:black;padding:0}.kicker,header p,.chips,.toolbar,.rules,.teachers,.tip,.task-footer,.arrow,#message{display:none!important}h1{font-size:24pt}.wrap{width:100%}main{margin-top:0}.panel,.task{box-shadow:none;break-inside:avoid;border:1px solid #bbb;margin-bottom:9px}.task .body{display:block!important}.task summary{padding:8px}.body{padding:8px}.fields{margin:6px 0}.field input,.field textarea{border:0;border-bottom:1px dotted #aaa;border-radius:0;min-height:28px;padding:3px}.task input[type=checkbox]{accent-color:#000}a{color:black;text-decoration:none}.sectiontitle{margin:12px 0}.progressbar{display:none}}
-
-/* Fotografické výzvy */
-.photo-proof{margin:14px 0 10px;padding:15px;border:1px solid #a8cec1;border-radius:13px;background:#f3f9f5}
-.photo-proof h3{margin:0 0 5px;font-size:1.06rem}
-.photo-proof p{margin:0 0 10px;font-size:.9rem;color:#435e52}
-.photo-input{display:block;width:100%;background:#fff;padding:11px;border:1px dashed #a7bfb6;border-radius:9px;font-size:.92rem}
-.photo-input::file-selector-button{border:0;border-radius:7px;padding:8px 11px;background:#d8e9df;color:#214d3d;font-weight:700;cursor:pointer}
-.photo-preview{display:block;width:100%;max-width:380px;max-height:265px;object-fit:contain;border-radius:10px;margin:12px 0;background:#e8eee8}
-.photo-preview[hidden]{display:none}
-.photo-verdict{font-size:.91rem;padding:9px 11px;border-radius:9px;background:#e6efeb;margin-top:9px;white-space:pre-wrap}
-.photo-verdict.success{background:#dbf1e4;color:#176144}
-.photo-verdict.fail{background:#fff0e6;color:#8a431e}
-.photo-btn:disabled{opacity:.6;cursor:progress}
-@media print{.photo-input,.photo-btn,.photo-verdict{display:none!important}.photo-proof{background:white}}
-
 </style>
 </head>
 <body>
@@ -118,14 +103,12 @@ a{color:#154c7a}
 <h2>🧭 Pravidla expedice</h2>
 <p>Všechny úkoly splňte z veřejně přístupných částí zahrady. Nikam nelezte, nic netrhejte, nevstupujte do záhonů a nedotýkejte se historických prvků.</p>
 <p>U pozorovacích úloh se správný počet může lišit podle místa, odkud se díváte. Zapište proto i místo pozorování. Když prvek nevidíte, použijte podobný bezpečně dostupný detail nebo úkol přeskočte.</p>
-<p><strong>📸 Tři fotovýzvy:</strong> u oblouků, oken a stromu musíš pořídit snímek. Aplikace automaticky zkusí rozpoznat vyfocený objekt; neověřený snímek se nepočítá jako hotový úkol. <strong>Nefoť lidi.</strong> Rozpoznávání pracuje přímo v telefonu, ale poprvé potřebuje stáhnout velký model (přibližně 150–220 MB). Fotografie se nikam neodesílají.</p>
 </section>
 <section class="panel">
 <div class="progress-head"><b>Postup výpravy</b><strong id="score">0 z 10 výzev</strong></div>
 <div class="progressbar" role="progressbar" aria-label="Postup expedice" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" id="progress"><div class="progressfill" id="fill"></div></div>
 <div class="toolbar">
 <button class="btn" id="save" type="button">⬇️ Stáhnout odpovědi</button>
-<button class="btn secondary" id="report" type="button">📸 Zpráva včetně fotek</button>
 <button class="btn secondary" id="print" type="button">🖨️ Tisk / PDF</button>
 <button class="btn warn" id="reset" type="button">Vymazat práci</button>
 </div>
@@ -140,7 +123,6 @@ a{color:#154c7a}
 <li>Vila byla dokončená roku <strong>1906</strong>; autor <strong>Dušan Samo Jurkovič</strong>. Ke konci roku 2026 je to přibližně <strong>120 let</strong> (úloha počítá rozdíl kalendářních let).</li>
 <li>Výpočty: okénka = řady × sloupce; odhad výšky = počet schodů × 16 cm; odhad vzdálenosti = počet kroků × délka kroku v cm ÷ 100.</li>
 <li>Při hodnocení sledujte hlavně způsob měření, jednotky, zdůvodnění, spolupráci a pozorovací schopnost. Upozorněte na to, že odhady nejsou přesné měření.</li>
-<li>Fotovýzvy: klasifikátor CLIP odhaduje jen typ fotografovaného objektu, nikoli polohu ani to, zda jde určitě o Jurkovičovu vilu. Může udělat chybu. U neuznaných fotek je možné vyexportovat zprávu s fotografiemi a posoudit je ručně. Výsledky AI nejsou důkazem autenticity snímku.</li>
 <li>Doporučení: 5 minut zadání, 25–30 minut průzkum, 5–10 minut společné sdílení. Úlohu se schody lze přeskočit, pokud nejsou ze zvolené trasy bezpečně viditelné.</li>
 </ul>
 </details>
@@ -154,8 +136,8 @@ a{color:#154c7a}
 var KEY="jurkovicova-zahrada-expedice-v1";
 var year=(new Date()).getFullYear();
 var tasks=[
-{id:"oblouky",icon:"🏛️",title:"Tajemství kamenných oblouků",tag:"Počítání · pozorování",photo:{label:"Kamenný oblouk vily",good:"a historic stone archway on the exterior of a building",bad:["a multi-paned glass window in a house","a leafy tree growing outdoors","a tiled red roof on a house","a wooden garden gate","a bicycle parked outside"]},prompt:"Najděte část vily s kamennými oblouky. Spočítejte obloukové otvory, které ze svého místa vidíte. Zapište odkud jste pozorovali.",fields:[{id:"number",label:"Kolik obloukových otvorů vidíte?",type:"number"},{id:"place",label:"Kde jste stáli?",type:"text",wide:true}],tip:"Počítejte pouze oblouky v jednom vámi vybraném pohledu. Nemusíte obcházet žádné zábrany."},
-{id:"okna",icon:"🪟",title:"Matematika v jednom okně",tag:"Násobení · geometrie",photo:{label:"Okno s více tabulkami",good:"a window with many small glass panes in a historic building",bad:["a stone archway on a historic house","a green tree in a garden","a garden gate with wooden planks","a red tiled roof on a building","a patch of flowers in a garden"]},prompt:"Vyberte jedno okno, na kterém rozeznáte pravidelnou mřížku malých tabulek. Spočítejte řady a sloupce tabulek. Kolik jich je celkem?",fields:[{id:"rows",label:"Počet řad",type:"number"},{id:"columns",label:"Počet sloupců",type:"number"},{id:"place",label:"Které okno jste si vybrali?",type:"text",wide:true}],tip:"Pokud je vybrané okno nepravidelné, vyberte jen jeho pravidelnou část. Celkem = řady × sloupce."},
+{id:"oblouky",icon:"🏛️",title:"Tajemství kamenných oblouků",tag:"Počítání · pozorování",prompt:"Najděte část vily s kamennými oblouky. Spočítejte obloukové otvory, které ze svého místa vidíte. Zapište odkud jste pozorovali.",fields:[{id:"number",label:"Kolik obloukových otvorů vidíte?",type:"number"},{id:"place",label:"Kde jste stáli?",type:"text",wide:true}],tip:"Počítejte pouze oblouky v jednom vámi vybraném pohledu. Nemusíte obcházet žádné zábrany."},
+{id:"okna",icon:"🪟",title:"Matematika v jednom okně",tag:"Násobení · geometrie",prompt:"Vyberte jedno okno, na kterém rozeznáte pravidelnou mřížku malých tabulek. Spočítejte řady a sloupce tabulek. Kolik jich je celkem?",fields:[{id:"rows",label:"Počet řad",type:"number"},{id:"columns",label:"Počet sloupců",type:"number"},{id:"place",label:"Které okno jste si vybrali?",type:"text",wide:true}],tip:"Pokud je vybrané okno nepravidelné, vyberte jen jeho pravidelnou část. Celkem = řady × sloupce."},
 {id:"shapes",icon:"📐",title:"Lovci geometrických tvarů",tag:"Geometrie · hledání",prompt:"Najděte na vile nebo v zahradě alespoň tři různé geometrické tvary a určete, na jakých prvcích se objevují.",fields:[{id:"items",label:"Označte alespoň tři nalezené tvary",type:"checks",min:3,options:["Trojúhelník","Obdélník","Čtverec","Oblouk","Kruh","Kosočtverec"],wide:true},{id:"where",label:"Příklad: kde jste některé tvary našli?",type:"text",wide:true}],tip:"Zkuste střechu, okna, vstupy a výzdobu domu. Kruh se najít nemusí – stačí jiné tři tvary."},
 {id:"materials",icon:"🧱",title:"Z čeho se staví vila?",tag:"Materiály · architektura",prompt:"Pátrejte po alespoň třech různých materiálech viditelných na stavbě a v její blízkosti. Určete, k čemu jsou použité.",fields:[{id:"items",label:"Které materiály jste skutečně viděli?",type:"checks",min:3,options:["Kámen","Dřevo","Sklo","Omítka","Kov","Pálená krytina"],wide:true},{id:"where",label:"Uveďte příklady jejich použití",type:"text",wide:true}],tip:"Zaměřte se na kamenný sokl nebo oblouky, okna, bránu a střechu. Věci nemusíte osahávat."},
 {id:"colors",icon:"🎨",title:"Paleta pana architekta",tag:"Barvy · detail",prompt:"Najděte tři výrazné barvy, které architektura používá. Ke každé barvě napište, na jakém prvku ji vidíte.",fields:[{id:"colors",label:"Barva 1, 2, 3 a kde jsou vidět",type:"textarea",wide:true}],tip:"Prohlédněte okenní rámy, střechu, bránu či dekorativní detaily. Barvy se mohou v různém světle trochu měnit."},
@@ -163,17 +145,17 @@ var tasks=[
 {id:"steps",icon:"👣",title:"Délka zahradní cestičky",tag:"Měření · převody jednotek",prompt:"Vyberte bezpečný úsek cesty mezi dvěma výraznými místy a projděte ho. Spočítejte kroky. Odhadněte délku jednoho vašeho kroku (např. 60 cm) a vypočítejte vzdálenost.",fields:[{id:"count",label:"Kolik kroků?",type:"number"},{id:"length",label:"Přibližná délka kroku v cm",type:"number"},{id:"place",label:"Mezi jakými dvěma místy jste šli?",type:"text",wide:true}],tip:"Vzdálenost v metrech = počet kroků × délka jednoho kroku v cm ÷ 100. Choďte jen po povolených cestách."},
 {id:"history",icon:"📜",title:"Dům cestující časem",tag:"Historie · odčítání",prompt:"Dušan Samo Jurkovič dokončil vilu v roce 1906. Kolik kalendářních let uplynulo od jejího dokončení do roku "+year+"?",fields:[{id:"age",label:"Uplynulo přibližně kolik let?",type:"number"}],tip:"Odečtěte 1906 od aktuálního roku. Počítáme rozdíl let, ne přesný počet dnů."},
 {id:"pattern",icon:"🔁",title:"Najdi opakující se vzor",tag:"Pravidelnost · vnímání",prompt:"Prohlédněte si okna, zdobení nebo oplocení. Najděte jeden detail, který se několikrát opakuje. Popište ho a spočítejte, kolikrát se opakuje ve zvolené části.",fields:[{id:"what",label:"Co se opakuje a kde?",type:"text",wide:true},{id:"number",label:"Kolikrát v dané části?",type:"number"}],tip:"Například podobná okénka, řada zdobených dílů nebo dlaždic. Sami určete začátek a konec počítaného úseku."},
-{id:"nature",icon:"🍂",title:"Příroda jako architekt",tag:"Pozorování · tvořivost",photo:{label:"Strom v zahradě",good:"a tree growing outside in a garden",bad:["a stone arch in a historic building","a multi-paned window in a house","a wooden garden gate","a metal bench on a path","a brick wall on a building"]},prompt:"Najděte v zahradě něco přírodního, co má přibližnou osovou souměrnost nebo opakující se vzor. Potom vymyslete vlastní krátkou otázku pro jiný tým, kterou lze vyřešit pouze pozorováním zahrady.",fields:[{id:"find",label:"Co jste našli v přírodě?",type:"text",wide:true},{id:"question",label:"Vaše otázka pro jiný tým",type:"textarea",wide:true},{id:"answer",label:"Očekávaná odpověď",type:"text",wide:true}],tip:"List, větvička nebo květ – záleží na ročním období. Nic netrhejte. Když nenajdete přesnou souměrnost, popište přibližnou."}
+{id:"nature",icon:"🍂",title:"Příroda jako architekt",tag:"Pozorování · tvořivost",prompt:"Najděte v zahradě něco přírodního, co má přibližnou osovou souměrnost nebo opakující se vzor. Potom vymyslete vlastní krátkou otázku pro jiný tým, kterou lze vyřešit pouze pozorováním zahrady.",fields:[{id:"find",label:"Co jste našli v přírodě?",type:"text",wide:true},{id:"question",label:"Vaše otázka pro jiný tým",type:"textarea",wide:true},{id:"answer",label:"Očekávaná odpověď",type:"text",wide:true}],tip:"List, větvička nebo květ – záleží na ročním období. Nic netrhejte. Když nenajdete přesnou souměrnost, popište přibližnou."}
 ];
-var state={team:"",group:"",answers:{},done:{},photos:{}};
-try{var stored=localStorage.getItem(KEY);if(stored){var parsed=JSON.parse(stored);if(parsed&&typeof parsed==="object"){state.team=typeof parsed.team==="string"?parsed.team:"";state.group=typeof parsed.group==="string"?parsed.group:"";state.answers=parsed.answers&&typeof parsed.answers==="object"?parsed.answers:{};state.done=parsed.done&&typeof parsed.done==="object"?parsed.done:{};state.photos=parsed.photos&&typeof parsed.photos==="object"?parsed.photos:{};}}}catch(e){}
+var state={team:"",group:"",answers:{},done:{}};
+try{var stored=localStorage.getItem(KEY);if(stored){var parsed=JSON.parse(stored);if(parsed&&typeof parsed==="object"){state.team=typeof parsed.team==="string"?parsed.team:"";state.group=typeof parsed.group==="string"?parsed.group:"";state.answers=parsed.answers&&typeof parsed.answers==="object"?parsed.answers:{};state.done=parsed.done&&typeof parsed.done==="object"?parsed.done:{};}}}catch(e){}
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
 function el(tag,cls,txt){var x=document.createElement(tag);if(cls)x.className=cls;if(txt!==undefined)x.textContent=txt;return x;}
 function answer(id,fid){var o=state.answers[id]||{};return o[fid]===undefined?"":o[fid];}
 function assign(id,fid,value){if(!state.answers[id])state.answers[id]={};state.answers[id][fid]=value;persist();}
 function num(v){var n=Number(v);return v!==""&&v!==null&&Number.isFinite(n)?n:null;}
 function valtext(v){return String(v===null||v===undefined?"":v).trim();}
-function isValid(t){return (!t.photo||(state.photos[t.id]&&state.photos[t.id].status==="accepted"))&&t.fields.every(function(f){if(f.required===false)return true;var a=answer(t.id,f.id);if(f.type==="checks")return Array.isArray(a)&&a.length>=(f.min||1);if(f.type==="number")return num(a)!==null&&num(a)>0;if(f.type==="textarea"||f.type==="text")return valtext(a).length>0;return true;});}
+function isValid(t){return t.fields.every(function(f){if(f.required===false)return true;var a=answer(t.id,f.id);if(f.type==="checks")return Array.isArray(a)&&a.length>=(f.min||1);if(f.type==="number")return num(a)!==null&&num(a)>0;if(f.type==="textarea"||f.type==="text")return valtext(a).length>0;return true;});}
 function format(n){return (Math.round(n*100)/100).toLocaleString("cs-CZ");}
 function calculation(t){var a=state.answers[t.id]||{},x,y;if(t.id==="okna"){x=num(a.rows);y=num(a.columns);if(x!==null&&y!==null&&x>0&&y>0)return x+" × "+y+" = "+format(x*y)+" tabulek";}if(t.id==="stairs"){x=num(a.count);if(x!==null&&x>0)return x+" × 16 cm = "+format(x*16)+" cm (≈ "+format(x*.16)+" m)";}if(t.id==="steps"){x=num(a.count);y=num(a.length);if(x!==null&&y!==null&&x>0&&y>0)return format(x)+" × "+format(y)+" cm = "+format(x*y/100)+" m (odhad)";}if(t.id==="history"){x=num(a.age);if(x!==null)return x===year-1906?"✅ Správně! "+year+" − 1906 = "+(year-1906)+" let.":"Zkuste znovu: od aktuálního roku odečtěte 1906.";}return "";}
 var messageTimer=null;
@@ -197,123 +179,6 @@ label.htmlFor=t.id+"_"+f.id;input.id=t.id+"_"+f.id;w.appendChild(input);
 return w;
 }
 function updateCalc(t,box){var s=calculation(t);box.textContent=s;box.hidden=!s;}
-
-/* Fotografické výzvy: zpracování a AI klasifikace běží pouze v prohlížeči. */
-var photoClassifierPromise=null;
-function loadPhotoClassifier(){
- if(!photoClassifierPromise){
-  photoClassifierPromise=import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.1")
-   .then(function(lib){return lib.pipeline("zero-shot-image-classification","Xenova/clip-vit-base-patch32",{dtype:"q8"});})
-   .catch(function(err){photoClassifierPromise=null;throw err;});
- }
- return photoClassifierPromise;
-}
-function photoUI(t){
- var panel=el("section","photo-proof"), data=state.photos[t.id]||{};panel.dataset.idProof=t.id;
- panel.appendChild(el("h3","","📸 Povinný fotodůkaz: "+t.photo.label));
- panel.appendChild(el("p","","Vyfoť požadovaný detail z přístupné cesty a bez lidí. Výběr fotky spustí automatickou kontrolu AI."));
- var field=document.createElement("input");field.type="file";field.accept="image/*";field.setAttribute("capture","environment");field.className="photo-input";field.setAttribute("aria-label","Vyfotit nebo vybrat: "+t.photo.label);
- panel.appendChild(field);
- var preview=document.createElement("img");preview.className="photo-preview";preview.alt="Vámi pořízený fotografický důkaz";preview.hidden=!data.image;
- if(data.image)preview.src=data.image;
- panel.appendChild(preview);
- var messageBox=el("div","photo-verdict");messageBox.setAttribute("role","status");messageBox.setAttribute("aria-live","polite");
- photoStatus(messageBox,data);
- panel.appendChild(messageBox);
- var btn=el("button","btn secondary photo-btn","↻ Zkusit zkontrolovat znovu");btn.type="button";btn.disabled=!data.image;btn.style.marginTop="9px";
- btn.addEventListener("click",function(){checkPhoto(t);});panel.appendChild(btn);
- field.addEventListener("change",async function(){
-  var file=field.files&&field.files[0];if(!file)return;
-  if(file.type&&!file.type.startsWith("image/")){photoStatus(messageBox,{status:"error",note:"Vyber obrázek (například JPG nebo PNG)."});return;}
-  if(file.size>25000000){photoStatus(messageBox,{status:"error",note:"Fotografie je příliš velká (maximálně 25 MB)."});return;}
-  try{
-   photoStatus(messageBox,{status:"checking",note:"Připravuji fotografii…"});
-   var image=await normalizePhoto(file);
-   state.photos[t.id]={image:image,status:"pending",note:"Snímek čeká na ověření."};
-   delete state.done[t.id];persist();render();refreshProgress();
-   await checkPhoto(t);
-  }catch(err){photoStatus(messageBox,{status:"error",note:"Fotografii nelze načíst. Zkuste prosím JPG nebo PNG."});}
- });
- return panel;
-}
-function photoStatus(node,photo){
- node.className="photo-verdict";
- var status=photo&&photo.status;
- if(status==="accepted"){
-  node.classList.add("success");node.textContent="✅ Aplikace pravděpodobně rozpoznala správný objekt. Fotodůkaz uznán. Upozornění: výsledek není stoprocentní.";
- }else if(status==="rejected"){
-  node.classList.add("fail");node.textContent="⚠️ Na fotce se nepodařilo přesvědčivě rozpoznat hledaný detail. Vyfoťte ho výrazněji nebo předejte snímek učiteli.";
- }else if(status==="checking"){
-  node.textContent=photo.note||"🔎 Probíhá automatická kontrola fotografie… Při prvním použití se stahuje model.";
- }else if(status==="error"){
-  node.classList.add("fail");node.textContent="⚠️ "+(photo.note||"Rozpoznávání momentálně není dostupné. Snímek lze předat učiteli, ale automaticky se neuzná.");
- }else if(photo&&photo.image){
-  node.textContent="📷 Fotografie je uložená jen na tomto zařízení. Ještě ji musí ověřit aplikace.";
- }else node.textContent="Fotografie zatím chybí.";
-}
-async function normalizePhoto(file){
- var url=URL.createObjectURL(file),img=new Image();
- try{
-  await new Promise(function(resolve,reject){img.onload=resolve;img.onerror=reject;img.src=url;});
-  var w=img.naturalWidth,h=img.naturalHeight;
-  if(!w||!h)throw Error("Prázdný snímek");
-  var scale=Math.min(1,1024/Math.max(w,h));
-  var canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(w*scale));canvas.height=Math.max(1,Math.round(h*scale));
-  var ctx=canvas.getContext("2d",{willReadFrequently:true});if(!ctx)throw Error("Canvas není dostupný");
-  ctx.drawImage(img,0,0,canvas.width,canvas.height);
-  var sample=document.createElement("canvas");sample.width=32;sample.height=32;
-  var c=sample.getContext("2d",{willReadFrequently:true});c.drawImage(canvas,0,0,32,32);
-  var a=c.getImageData(0,0,32,32).data,sum=0,sumSq=0;
-  for(var i=0;i<a.length;i+=4){var v=(a[i]+a[i+1]+a[i+2])/3;sum+=v;sumSq+=v*v;}
-  var mean=sum/1024,standardDeviation=Math.sqrt(Math.max(0,sumSq/1024-mean*mean));
-  if(mean<22||mean>246||standardDeviation<12)throw Error("Snímek je příliš tmavý, světlý nebo bez detailů.");
-  return canvas.toDataURL("image/jpeg",.78);
- }finally{URL.revokeObjectURL(url);}
-}
-async function checkPhoto(t){
- var record=state.photos[t.id];
- if(!record||!record.image)return;
- var proofImage=record.image;
- record.status="checking";record.note="🔎 Probíhá kontrola. Poprvé se musí stáhnout model rozpoznávání (větší soubor), proto je potřeba internet.";persist();
- var node=document.querySelector('[data-id-proof="'+t.id+'"] .photo-verdict');
- var button=document.querySelector('[data-id-proof="'+t.id+'"] .photo-btn');
- if(button)button.disabled=true;if(node)photoStatus(node,record);
- try{
-  var classifier=await loadPhotoClassifier();
-  var labels=[t.photo.good].concat(t.photo.bad);
-  var result=await classifier(proofImage,labels);
-  // Skóre je relativní vůči zadaným možnostem; nepředstavuje pravděpodobnost správnosti.
-  var best=Array.isArray(result)?result[0]:null;
-  var accepted=!!best&&best.label===t.photo.good&&best.score>=.32;
-  if(state.photos[t.id]&&state.photos[t.id].image===proofImage){
-   state.photos[t.id]={image:proofImage,status:accepted?"accepted":"rejected",score:best?best.score:null,topLabel:best?best.label:"",note:"Automatické porovnání kategorií"};
-   if(!accepted)delete state.done[t.id];
-   persist();render();refreshProgress();
-  }
- }catch(err){
-  if(state.photos[t.id]&&state.photos[t.id].image===proofImage){
-   state.photos[t.id]={image:proofImage,status:"error",note:"AI model se nepodařilo načíst nebo spustit (možná chybí připojení či paměť). Fotka zůstává uložená pro učitele."};
-   delete state.done[t.id];persist();render();refreshProgress();
-  }
- }
-}
-function safeHTML(text){return String(text==null?"":text).replace(/[&<>"']/g,function(s){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[s];});}
-function exportPhotoReport(){
- var parts=['<!doctype html><html lang="cs"><meta charset="utf-8"><title>Jurkovičova zahrada – výsledky</title><style>body{font:16px/1.5 system-ui;max-width:850px;margin:30px auto;padding:0 20px;color:#203a43}article{padding:15px 0;border-top:1px solid #ccd6d2;break-inside:avoid}img{max-width:380px;width:100%;height:auto;border-radius:10px}h1{font-size:2em}@media print{article{break-inside:avoid}}</style><h1>Jurkovičova zahrada – výsledky</h1>'];
- parts.push("<p><b>Tým:</b> "+safeHTML(state.team||"—")+"<br><b>Třída:</b> "+safeHTML(state.group||"—")+"<br><b>Vyplněno:</b> "+safeHTML(new Date().toLocaleString("cs-CZ"))+"</p>");
- tasks.forEach(function(t,i){
-  parts.push("<article><h2>"+(i+1)+". "+safeHTML(t.title)+"</h2><p><b>Stav:</b> "+(state.done[t.id]?"Splněno":"Nedokončeno")+"</p>");
-  t.fields.forEach(function(f){var a=answer(t.id,f.id);parts.push("<p><b>"+safeHTML(f.label)+":</b> "+safeHTML(Array.isArray(a)?a.join(", "):(a||"—"))+"</p>");});
-  if(t.photo){var p=state.photos[t.id]||{};parts.push("<p><b>Fotodůkaz:</b> "+safeHTML(p.status==="accepted"?"automaticky uznán":p.status==="rejected"?"neuznán automaticky":p.image?"čeká na ruční kontrolu":"chybí")+"</p>");if(p.image&&p.image.startsWith("data:image/jpeg;base64,"))parts.push('<img alt="Fotodůkaz" src="'+p.image+'">');}
-  parts.push("</article>");
- });
- parts.push("<p><small>AI ověřuje jen orientační typ objektu, ne místo pořízení. Fotografie byly uloženy v zařízení a vloženy do této zprávy až při exportu.</small></p></html>");
- var blob=new Blob([parts.join("")],{type:"text/html;charset=utf-8"});
- var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="jurkovicova-zahrada-fotodukazy.html";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href);},2000);
- message("Zpráva s fotografiemi byla připravena.");
-}
-document.getElementById("report").addEventListener("click",exportPhotoReport);
-
 function render(){
 var root=document.getElementById("tasks");
 var opened={};root.querySelectorAll("details.task[open]").forEach(function(d){opened[d.dataset.id]=true;});
@@ -328,13 +193,13 @@ summ.appendChild(el("span","state",state.done[t.id]?"Hotovo":"K prozkoumání"))
 var body=el("div","body");body.appendChild(el("p","",t.prompt));
 var fields=el("div","fields");var calcBox=el("div","calculation");
 t.fields.forEach(function(f){fields.appendChild(makeField(t,f,calcBox));});
-body.appendChild(fields);updateCalc(t,calcBox);body.appendChild(calcBox);if(t.photo)body.appendChild(photoUI(t));
+body.appendChild(fields);updateCalc(t,calcBox);body.appendChild(calcBox);
 var tip=el("details","tip");tip.appendChild(el("summary","","Nápověda"));tip.appendChild(el("p","",t.tip));body.appendChild(tip);
 var footer=el("div","task-footer");var btn=el("button","btn"+(state.done[t.id]?" secondary":""),state.done[t.id]?"Vrátit mezi rozpracované":"✓ Označit jako splněné");btn.type="button";
 var warning=el("span","error");warning.setAttribute("role","status");
 btn.addEventListener("click",function(){
 if(state.done[t.id]){delete state.done[t.id];persist();render();refreshProgress();return;}
-if(!isValid(t)){warning.textContent="Vyplňte odpovědi a u fotovýzvy nejdřív nechte fotografii schválit aplikací.";return;}
+if(!isValid(t)){warning.textContent="Nejdříve vyplňte všechny odpovědi (a požadované tvary / materiály).";return;}
 if(t.id==="history"&&num(answer(t.id,"age"))!==year-1906){warning.textContent="Výpočet zatím nesedí. Podívejte se na nápovědu.";return;}
 state.done[t.id]=true;persist();render();refreshProgress();
 });
@@ -357,7 +222,7 @@ var printOpen=[];
 window.addEventListener("beforeprint",function(){printOpen=Array.from(document.querySelectorAll("details.task[open]")).map(function(x){return x.dataset.id;});document.querySelectorAll("details.task").forEach(function(d){d.open=true;});});
 window.addEventListener("afterprint",function(){document.querySelectorAll("details.task").forEach(function(d){d.open=printOpen.indexOf(d.dataset.id)>=0;});});
 document.getElementById("print").addEventListener("click",function(){window.print();});
-document.getElementById("reset").addEventListener("click",function(){if(!window.confirm("Opravdu chcete vymazat celý postup i odpovědi na tomto zařízení?"))return;state={team:"",group:"",answers:{},done:{},photos:{}};persist();document.getElementById("team").value="";document.getElementById("group").value="";render();refreshProgress();message("Práce byla vymazána.");});
+document.getElementById("reset").addEventListener("click",function(){if(!window.confirm("Opravdu chcete vymazat celý postup i odpovědi na tomto zařízení?"))return;state={team:"",group:"",answers:{},done:{}};persist();document.getElementById("team").value="";document.getElementById("group").value="";render();refreshProgress();message("Práce byla vymazána.");});
 render();refreshProgress();
 })();
 </script>
