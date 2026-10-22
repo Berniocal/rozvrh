@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#17495a">
+<meta name="description" content="Terénní pátrací hra pro děti v zahradě Jurkovičovy vily v Brně.">
+<title>Jurkovičova zahrada – pátrací výprava</title>
+<style>
+:root{--ink:#203a43;--muted:#5c6f76;--blue:#17495a;--orange:#a84827;--paper:#fffdf7;--line:#d9dfd8;--green:#20795d;--focus:#005fcc}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f0f1ea;color:var(--ink);font:16px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+header{background:linear-gradient(135deg,#17495a 0%,#286a71 62%,#48787b 100%);color:white;padding:25px 16px 36px}
+.wrap{width:min(100% - 28px,890px);margin-inline:auto}
+.kicker{letter-spacing:.12em;text-transform:uppercase;font-size:.77rem;font-weight:800;color:#fde0b2}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.08;letter-spacing:-.04em;margin:12px 0}
+header p{font-size:1.03rem;max-width:640px;color:#f0f5f2;margin-bottom:18px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font-size:.82rem;border:1px solid #ffffff65;background:#ffffff1b;border-radius:99px;padding:5px 11px}
+main{margin-top:-20px;position:relative;padding-bottom:38px}
+.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:14px;box-shadow:0 5px 18px #173a4410}
+.panel h2{font-size:1.25rem;margin:0 0 8px}
+.intro{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+label{display:block;font-weight:650}
+input[type=text],input[type=number],textarea,select{width:100%;min-height:44px;border:1.5px solid #b6c8c6;border-radius:10px;padding:10px 12px;background:#fff;color:var(--ink);margin-top:6px}
+textarea{min-height:78px;resize:vertical}
+.mini{font-size:.86rem;color:var(--muted)}
+.rules{background:#fff8e9;border-color:#ecd5a9}
+.rules p{margin:0 0 8px}
+.rules p:last-child{margin:0}
+.progress-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
+.progress-head b{font-size:1.05rem}
+.progressbar{height:13px;background:#e5ece8;overflow:hidden;border-radius:99px}
+.progressfill{height:100%;width:0;background:linear-gradient(90deg,#1c795c,#58af75);transition:width .3s}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.btn{border:0;border-radius:11px;background:var(--blue);color:white;padding:10px 15px;font-weight:700;min-height:44px}
+.btn.secondary{background:#e6eeed;color:#17495a}
+.btn.warn{background:#fff0e9;color:#883416;border:1px solid #ead3cb}
+.btn:hover{filter:brightness(.95)}
+.sectiontitle{margin:25px 1px 12px;font-size:1.5rem}
+.tasks{display:grid;gap:13px}
+.task{background:var(--paper);border:1px solid #d8ded5;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px #183e4410}
+.task.done{border-color:#8dc3a9;background:#f5fff8}
+.task summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:13px;padding:16px}
+.task summary::-webkit-details-marker{display:none}
+.num{display:grid;place-items:center;background:#dcebe8;color:#17495a;border-radius:12px;width:45px;min-width:45px;height:45px;font-size:1.3rem;font-weight:800}
+.task.done .num{background:#d2f0df;color:#176448}
+.heading{flex:1;min-width:0}
+.heading strong{display:block;font-size:1.06rem}
+.heading small{display:block;font-size:.83rem;color:var(--muted)}
+.state{font-weight:700;font-size:.8rem;color:#57696c;white-space:nowrap}
+.task.done .state{color:#146a4d}
+.arrow{font-size:1rem;color:#60777d}
+.task[open] .arrow{transform:rotate(180deg)}
+.body{border-top:1px solid var(--line);padding:17px 17px 19px}
+.body>p{margin:0 0 13px}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+.field.wide{grid-column:1/-1}
+.field small{font-weight:400;color:var(--muted);display:block}
+.optiongrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.option{display:flex;align-items:center;gap:9px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff;min-height:44px}
+.option input{width:20px;height:20px;margin:0;accent-color:#286a71}
+.calculation{background:#eaf4f3;border-radius:10px;padding:10px 12px;font-size:.95rem;margin:0 0 12px}
+.tip{border-left:3px solid #bf673e;background:#fff3e9;margin:11px 0;padding:10px 12px;font-size:.94rem}
+.tip summary{display:list-item;padding:0;margin-left:16px;font-weight:700;list-style:disclosure-closed}
+.tip[open] summary{list-style:disclosure-open}
+.tip p{margin:8px 0 0}
+.task-footer{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:14px}
+.error{color:#9a321e;font-size:.9rem;min-height:1.1rem}
+.footnote{padding:7px 1px 20px;color:var(--muted);font-size:.86rem}
+.teachers summary{cursor:pointer;font-weight:800}
+.teachers ul{padding-left:20px}
+#message{position:fixed;z-index:5;bottom:16px;left:50%;transform:translateX(-50%);max-width:min(92vw,560px);padding:12px 20px;border-radius:12px;color:#fff;background:#213d4a;box-shadow:0 10px 30px #0003;display:none;text-align:center}
+#message.show{display:block}
+a{color:#154c7a}
+@media(max-width:600px){.intro,.fields{grid-template-columns:1fr}.wrap{width:min(100% - 22px,890px)}.panel{padding:16px}.state{font-size:.72rem}.task summary{padding:13px;gap:9px}.num{width:39px;min-width:39px;height:39px}.body{padding:14px}.optiongrid{grid-template-columns:1fr 1fr}}
+@media(max-width:360px){.optiongrid{grid-template-columns:1fr}.task summary{flex-wrap:wrap}.arrow{display:none}}
+@media print{body{background:white;color:black;font-size:11pt}header{background:white!important;color:black;padding:0}.kicker,header p,.chips,.toolbar,.rules,.teachers,.tip,.task-footer,.arrow,#message{display:none!important}h1{font-size:24pt}.wrap{width:100%}main{margin-top:0}.panel,.task{box-shadow:none;break-inside:avoid;border:1px solid #bbb;margin-bottom:9px}.task .body{display:block!important}.task summary{padding:8px}.body{padding:8px}.fields{margin:6px 0}.field input,.field textarea{border:0;border-bottom:1px dotted #aaa;border-radius:0;min-height:28px;padding:3px}.task input[type=checkbox]{accent-color:#000}a{color:black;text-decoration:none}.sectiontitle{margin:12px 0}.progressbar{display:none}}
+</style>
+</head>
+<body>
+<header>
+<div class="wrap">
+<div class="kicker">Terénní výprava · Brno-Žabovřesky</div>
+<h1>Jurkovičova<br>zahrada 🕵️</h1>
+<p>Staňte se na chvíli architekty, matematiky a průzkumníky. Hledejte detaily, počítejte a objevujte zahradu kolem slavné vily.</p>
+<div class="chips"><span class="chip">⏱ 30–45 minut</span><span class="chip">👥 Dvojice nebo trojice</span><span class="chip">📱 Mobil / tisk</span><span class="chip">🔎 10 výzev</span></div>
+</div>
+</header>
+<main class="wrap">
+<section class="panel">
+<div class="intro">
+<div><label for="team">Název týmu</label><input type="text" id="team" maxlength="70" placeholder="Např. Modrá okna" autocomplete="off"></div>
+<div><label for="group">Třída (nepovinné)</label><input type="text" id="group" maxlength="40" placeholder="Např. 1A6" autocomplete="off"></div>
+</div>
+<p class="mini">Odpovědi se ukládají automaticky do tohoto prohlížeče. Nic se neposílá na server. Pokud práci otevřete na jiném telefonu, odpovědi se nepřenesou.</p>
+</section>
+<section class="panel rules">
+<h2>🧭 Pravidla expedice</h2>
+<p>Všechny úkoly splňte z veřejně přístupných částí zahrady. Nikam nelezte, nic netrhejte, nevstupujte do záhonů a nedotýkejte se historických prvků.</p>
+<p>U pozorovacích úloh se správný počet může lišit podle místa, odkud se díváte. Zapište proto i místo pozorování. Když prvek nevidíte, použijte podobný bezpečně dostupný detail nebo úkol přeskočte.</p>
+</section>
+<section class="panel">
+<div class="progress-head"><b>Postup výpravy</b><strong id="score">0 z 10 výzev</strong></div>
+<div class="progressbar" role="progressbar" aria-label="Postup expedice" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" id="progress"><div class="progressfill" id="fill"></div></div>
+<div class="toolbar">
+<button class="btn" id="save" type="button">⬇️ Stáhnout odpovědi</button>
+<button class="btn secondary" id="print" type="button">🖨️ Tisk / PDF</button>
+<button class="btn warn" id="reset" type="button">Vymazat práci</button>
+</div>
+</section>
+<h2 class="sectiontitle">Deset badatelských výzev</h2>
+<div id="tasks" class="tasks"></div>
+<section class="panel teachers" style="margin-top:20px">
+<details>
+<summary>👩‍🏫 Poznámky pro učitele a kontrola</summary>
+<p>Úlohy jsou určené k individuálnímu pozorování v exteriéru. U oken, oblouků, schodišť i vzorů nepředepisujeme univerzální počet – ten závisí na zvoleném výřezu a přístupnosti.</p>
+<ul>
+<li>Vila byla dokončená roku <strong>1906</strong>; autor <strong>Dušan Samo Jurkovič</strong>. Ke konci roku 2026 je to přibližně <strong>120 let</strong> (úloha počítá rozdíl kalendářních let).</li>
+<li>Výpočty: okénka = řady × sloupce; odhad výšky = počet schodů × 16 cm; odhad vzdálenosti = počet kroků × délka kroku v cm ÷ 100.</li>
+<li>Při hodnocení sledujte hlavně způsob měření, jednotky, zdůvodnění, spolupráci a pozorovací schopnost. Upozorněte na to, že odhady nejsou přesné měření.</li>
+<li>Doporučení: 5 minut zadání, 25–30 minut průzkum, 5–10 minut společné sdílení. Úlohu se schody lze přeskočit, pokud nejsou ze zvolené trasy bezpečně viditelné.</li>
+</ul>
+</details>
+</section>
+<footer class="footnote">Pátrací aktivita pro venkovní návštěvu zahrady Jurkovičovy vily. Historické informace: <a href="https://moravska-galerie.cz/kontakt/jurkovicova-vila/" target="_blank" rel="noopener noreferrer">Moravská galerie v Brně</a>. Neoficiální školní pomůcka, není provozována galerií.</footer>
+</main>
+<div id="message" role="status" aria-live="polite"></div>
+<script>
+(function(){
+"use strict";
+var KEY="jurkovicova-zahrada-expedice-v1";
+var year=(new Date()).getFullYear();
+var tasks=[
+{id:"oblouky",icon:"🏛️",title:"Tajemství kamenných oblouků",tag:"Počítání · pozorování",prompt:"Najděte část vily s kamennými oblouky. Spočítejte obloukové otvory, které ze svého místa vidíte. Zapište odkud jste pozorovali.",fields:[{id:"number",label:"Kolik obloukových otvorů vidíte?",type:"number"},{id:"place",label:"Kde jste stáli?",type:"text",wide:true}],tip:"Počítejte pouze oblouky v jednom vámi vybraném pohledu. Nemusíte obcházet žádné zábrany."},
+{id:"okna",icon:"🪟",title:"Matematika v jednom okně",tag:"Násobení · geometrie",prompt:"Vyberte jedno okno, na kterém rozeznáte pravidelnou mřížku malých tabulek. Spočítejte řady a sloupce tabulek. Kolik jich je celkem?",fields:[{id:"rows",label:"Počet řad",type:"number"},{id:"columns",label:"Počet sloupců",type:"number"},{id:"place",label:"Které okno jste si vybrali?",type:"text",wide:true}],tip:"Pokud je vybrané okno nepravidelné, vyberte jen jeho pravidelnou část. Celkem = řady × sloupce."},
+{id:"shapes",icon:"📐",title:"Lovci geometrických tvarů",tag:"Geometrie · hledání",prompt:"Najděte na vile nebo v zahradě alespoň tři různé geometrické tvary a určete, na jakých prvcích se objevují.",fields:[{id:"items",label:"Označte alespoň tři nalezené tvary",type:"checks",min:3,options:["Trojúhelník","Obdélník","Čtverec","Oblouk","Kruh","Kosočtverec"],wide:true},{id:"where",label:"Příklad: kde jste některé tvary našli?",type:"text",wide:true}],tip:"Zkuste střechu, okna, vstupy a výzdobu domu. Kruh se najít nemusí – stačí jiné tři tvary."},
+{id:"materials",icon:"🧱",title:"Z čeho se staví vila?",tag:"Materiály · architektura",prompt:"Pátrejte po alespoň třech různých materiálech viditelných na stavbě a v její blízkosti. Určete, k čemu jsou použité.",fields:[{id:"items",label:"Které materiály jste skutečně viděli?",type:"checks",min:3,options:["Kámen","Dřevo","Sklo","Omítka","Kov","Pálená krytina"],wide:true},{id:"where",label:"Uveďte příklady jejich použití",type:"text",wide:true}],tip:"Zaměřte se na kamenný sokl nebo oblouky, okna, bránu a střechu. Věci nemusíte osahávat."},
+{id:"colors",icon:"🎨",title:"Paleta pana architekta",tag:"Barvy · detail",prompt:"Najděte tři výrazné barvy, které architektura používá. Ke každé barvě napište, na jakém prvku ji vidíte.",fields:[{id:"colors",label:"Barva 1, 2, 3 a kde jsou vidět",type:"textarea",wide:true}],tip:"Prohlédněte okenní rámy, střechu, bránu či dekorativní detaily. Barvy se mohou v různém světle trochu měnit."},
+{id:"stairs",icon:"🪜",title:"Jak vysoko vedou schody?",tag:"Odhad · násobení",prompt:"Najděte schůdky, které můžete bezpečně spočítat z cestičky. Pro odhad předpokládejte, že jeden schod je vysoký 16 cm. Jaké převýšení odpovídá zjištěnému počtu?",fields:[{id:"count",label:"Počet schodů",type:"number"},{id:"place",label:"Kde jsou tyto schody?",type:"text",wide:true}],tip:"Výsledek v centimetrech = počet schodů × 16. Jde o odhad, ne skutečnou výšku. Pokud schody nejsou vidět, tuto výzvu přeskočte."},
+{id:"steps",icon:"👣",title:"Délka zahradní cestičky",tag:"Měření · převody jednotek",prompt:"Vyberte bezpečný úsek cesty mezi dvěma výraznými místy a projděte ho. Spočítejte kroky. Odhadněte délku jednoho vašeho kroku (např. 60 cm) a vypočítejte vzdálenost.",fields:[{id:"count",label:"Kolik kroků?",type:"number"},{id:"length",label:"Přibližná délka kroku v cm",type:"number"},{id:"place",label:"Mezi jakými dvěma místy jste šli?",type:"text",wide:true}],tip:"Vzdálenost v metrech = počet kroků × délka jednoho kroku v cm ÷ 100. Choďte jen po povolených cestách."},
+{id:"history",icon:"📜",title:"Dům cestující časem",tag:"Historie · odčítání",prompt:"Dušan Samo Jurkovič dokončil vilu v roce 1906. Kolik kalendářních let uplynulo od jejího dokončení do roku "+year+"?",fields:[{id:"age",label:"Uplynulo přibližně kolik let?",type:"number"}],tip:"Odečtěte 1906 od aktuálního roku. Počítáme rozdíl let, ne přesný počet dnů."},
+{id:"pattern",icon:"🔁",title:"Najdi opakující se vzor",tag:"Pravidelnost · vnímání",prompt:"Prohlédněte si okna, zdobení nebo oplocení. Najděte jeden detail, který se několikrát opakuje. Popište ho a spočítejte, kolikrát se opakuje ve zvolené části.",fields:[{id:"what",label:"Co se opakuje a kde?",type:"text",wide:true},{id:"number",label:"Kolikrát v dané části?",type:"number"}],tip:"Například podobná okénka, řada zdobených dílů nebo dlaždic. Sami určete začátek a konec počítaného úseku."},
+{id:"nature",icon:"🍂",title:"Příroda jako architekt",tag:"Pozorování · tvořivost",prompt:"Najděte v zahradě něco přírodního, co má přibližnou osovou souměrnost nebo opakující se vzor. Potom vymyslete vlastní krátkou otázku pro jiný tým, kterou lze vyřešit pouze pozorováním zahrady.",fields:[{id:"find",label:"Co jste našli v přírodě?",type:"text",wide:true},{id:"question",label:"Vaše otázka pro jiný tým",type:"textarea",wide:true},{id:"answer",label:"Očekávaná odpověď",type:"text",wide:true}],tip:"List, větvička nebo květ – záleží na ročním období. Nic netrhejte. Když nenajdete přesnou souměrnost, popište přibližnou."}
+];
+var state={team:"",group:"",answers:{},done:{}};
+try{var stored=localStorage.getItem(KEY);if(stored){var parsed=JSON.parse(stored);if(parsed&&typeof parsed==="object"){state.team=typeof parsed.team==="string"?parsed.team:"";state.group=typeof parsed.group==="string"?parsed.group:"";state.answers=parsed.answers&&typeof parsed.answers==="object"?parsed.answers:{};state.done=parsed.done&&typeof parsed.done==="object"?parsed.done:{};}}}catch(e){}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function el(tag,cls,txt){var x=document.createElement(tag);if(cls)x.className=cls;if(txt!==undefined)x.textContent=txt;return x;}
+function answer(id,fid){var o=state.answers[id]||{};return o[fid]===undefined?"":o[fid];}
+function assign(id,fid,value){if(!state.answers[id])state.answers[id]={};state.answers[id][fid]=value;persist();}
+function num(v){var n=Number(v);return v!==""&&v!==null&&Number.isFinite(n)?n:null;}
+function valtext(v){return String(v===null||v===undefined?"":v).trim();}
+function isValid(t){return t.fields.every(function(f){if(f.required===false)return true;var a=answer(t.id,f.id);if(f.type==="checks")return Array.isArray(a)&&a.length>=(f.min||1);if(f.type==="number")return num(a)!==null&&num(a)>0;if(f.type==="textarea"||f.type==="text")return valtext(a).length>0;return true;});}
+function format(n){return (Math.round(n*100)/100).toLocaleString("cs-CZ");}
+function calculation(t){var a=state.answers[t.id]||{},x,y;if(t.id==="okna"){x=num(a.rows);y=num(a.columns);if(x!==null&&y!==null&&x>0&&y>0)return x+" × "+y+" = "+format(x*y)+" tabulek";}if(t.id==="stairs"){x=num(a.count);if(x!==null&&x>0)return x+" × 16 cm = "+format(x*16)+" cm (≈ "+format(x*.16)+" m)";}if(t.id==="steps"){x=num(a.count);y=num(a.length);if(x!==null&&y!==null&&x>0&&y>0)return format(x)+" × "+format(y)+" cm = "+format(x*y/100)+" m (odhad)";}if(t.id==="history"){x=num(a.age);if(x!==null)return x===year-1906?"✅ Správně! "+year+" − 1906 = "+(year-1906)+" let.":"Zkuste znovu: od aktuálního roku odečtěte 1906.";}return "";}
+var messageTimer=null;
+function message(text){var m=document.getElementById("message");m.textContent=text;m.classList.add("show");if(messageTimer)clearTimeout(messageTimer);messageTimer=setTimeout(function(){m.classList.remove("show");},3200);}
+function refreshProgress(){var done=tasks.filter(function(t){return !!state.done[t.id];}).length;document.getElementById("score").textContent=done+" z "+tasks.length+" výzev";document.getElementById("fill").style.width=(done/tasks.length*100)+"%";document.getElementById("progress").setAttribute("aria-valuenow",String(done));if(done===tasks.length)message("Výprava hotová! Stáhněte odpovědi a ukažte je učiteli.");}
+function makeField(t,f,calcBox){
+var w=el("div","field"+(f.wide?" wide":""));
+var label=el("label","",f.label);w.appendChild(label);
+var value=answer(t.id,f.id);
+if(f.type==="checks"){
+var g=el("div","optiongrid");
+f.options.forEach(function(op){var row=el("label","option");var input=document.createElement("input");input.type="checkbox";input.checked=Array.isArray(value)&&value.indexOf(op)>=0;input.addEventListener("change",function(){var curr=answer(t.id,f.id);curr=Array.isArray(curr)?curr.slice():[];if(input.checked&&curr.indexOf(op)<0)curr.push(op);if(!input.checked)curr=curr.filter(function(z){return z!==op;});assign(t.id,f.id,curr);updateCalc(t,calcBox);});row.appendChild(input);row.appendChild(el("span","",op));g.appendChild(row);});w.appendChild(g);
+}else{
+var input=document.createElement(f.type==="textarea"?"textarea":"input");
+if(f.type!=="textarea"){input.type=f.type==="number"?"number":"text";if(f.type==="number"){input.min="0";input.step="1";input.inputMode="numeric";}}
+input.value=typeof value==="string"||typeof value==="number"?value:"";
+input.placeholder=f.type==="textarea"?"Napište své pozorování…":f.type==="number"?"Zadejte číslo":"Vaše odpověď…";
+input.addEventListener("input",function(){assign(t.id,f.id,input.value);updateCalc(t,calcBox);});
+label.htmlFor=t.id+"_"+f.id;input.id=t.id+"_"+f.id;w.appendChild(input);
+}
+return w;
+}
+function updateCalc(t,box){var s=calculation(t);box.textContent=s;box.hidden=!s;}
+function render(){
+var root=document.getElementById("tasks");
+var opened={};root.querySelectorAll("details.task[open]").forEach(function(d){opened[d.dataset.id]=true;});
+var firstRender=root.children.length===0;
+root.replaceChildren();
+tasks.forEach(function(t,i){
+var d=el("details","task"+(state.done[t.id]?" done":""));d.dataset.id=t.id;
+if(opened[t.id]||(firstRender&&i===0))d.open=true;
+var summ=el("summary");summ.appendChild(el("span","num",state.done[t.id]?"✓":String(i+1)));
+var heading=el("span","heading");heading.appendChild(el("strong","",t.icon+" "+t.title));heading.appendChild(el("small","",t.tag));summ.appendChild(heading);
+summ.appendChild(el("span","state",state.done[t.id]?"Hotovo":"K prozkoumání"));summ.appendChild(el("span","arrow","⌄"));d.appendChild(summ);
+var body=el("div","body");body.appendChild(el("p","",t.prompt));
+var fields=el("div","fields");var calcBox=el("div","calculation");
+t.fields.forEach(function(f){fields.appendChild(makeField(t,f,calcBox));});
+body.appendChild(fields);updateCalc(t,calcBox);body.appendChild(calcBox);
+var tip=el("details","tip");tip.appendChild(el("summary","","Nápověda"));tip.appendChild(el("p","",t.tip));body.appendChild(tip);
+var footer=el("div","task-footer");var btn=el("button","btn"+(state.done[t.id]?" secondary":""),state.done[t.id]?"Vrátit mezi rozpracované":"✓ Označit jako splněné");btn.type="button";
+var warning=el("span","error");warning.setAttribute("role","status");
+btn.addEventListener("click",function(){
+if(state.done[t.id]){delete state.done[t.id];persist();render();refreshProgress();return;}
+if(!isValid(t)){warning.textContent="Nejdříve vyplňte všechny odpovědi (a požadované tvary / materiály).";return;}
+if(t.id==="history"&&num(answer(t.id,"age"))!==year-1906){warning.textContent="Výpočet zatím nesedí. Podívejte se na nápovědu.";return;}
+state.done[t.id]=true;persist();render();refreshProgress();
+});
+footer.appendChild(btn);footer.appendChild(warning);body.appendChild(footer);d.appendChild(body);root.appendChild(d);
+});
+}
+document.getElementById("team").value=state.team;document.getElementById("group").value=state.group;
+document.getElementById("team").addEventListener("input",function(e){state.team=e.target.value;persist();});
+document.getElementById("group").addEventListener("input",function(e){state.group=e.target.value;persist();});
+function exportText(){
+var lines=["JURKOVIČOVA ZAHRADA – PÁTRACÍ VÝPRAVA","Tým: "+(state.team||"bez názvu"),"Třída: "+(state.group||"neuvedena"),"Vytvořeno: "+new Date().toLocaleString("cs-CZ"),"", "Splněno: "+tasks.filter(function(t){return !!state.done[t.id];}).length+"/"+tasks.length,""];
+tasks.forEach(function(t,i){lines.push((i+1)+". "+t.title+(state.done[t.id]?" [SPLNĚNO]":" [ROZPRACOVÁNO]"));t.fields.forEach(function(f){var a=answer(t.id,f.id);lines.push("   "+f.label+": "+(Array.isArray(a)?a.join(", "):valtext(a)||"—"));});var calc=calculation(t);if(calc)lines.push("   Výpočet: "+calc);lines.push("");});
+lines.push("Poznámka: výsledky pozorování závisí na zvoleném pohledu a měření.");
+var blob=new Blob(["\ufeff"+lines.join("\n")],{type:"text/plain;charset=utf-8"});
+var link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download="jurkovicova-zahrada-"+(state.team?state.team.toLocaleLowerCase("cs-CZ").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9-]/g,"-").slice(0,30):"odpovedi")+".txt";document.body.appendChild(link);link.click();link.remove();setTimeout(function(){URL.revokeObjectURL(link.href);},1000);
+message("Soubor s odpověďmi byl připraven.");
+}
+document.getElementById("save").addEventListener("click",exportText);
+var printOpen=[];
+window.addEventListener("beforeprint",function(){printOpen=Array.from(document.querySelectorAll("details.task[open]")).map(function(x){return x.dataset.id;});document.querySelectorAll("details.task").forEach(function(d){d.open=true;});});
+window.addEventListener("afterprint",function(){document.querySelectorAll("details.task").forEach(function(d){d.open=printOpen.indexOf(d.dataset.id)>=0;});});
+document.getElementById("print").addEventListener("click",function(){window.print();});
+document.getElementById("reset").addEventListener("click",function(){if(!window.confirm("Opravdu chcete vymazat celý postup i odpovědi na tomto zařízení?"))return;state={team:"",group:"",answers:{},done:{}};persist();document.getElementById("team").value="";document.getElementById("group").value="";render();refreshProgress();message("Práce byla vymazána.");});
+render();refreshProgress();
+})();
+</script>
+</body>
+</html>
